@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generating Key</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --text-color: #2d3436;
+            --bg-color: #f9f9f9;
+            --success-color: #00b894;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Menú minimalista */
+        nav {
+            padding: 1.5rem 2rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            position: relative;
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .logo:hover::after {
+            width: 100%;
+        }
+        
+        /* Contenido principal */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            position: relative;
+            animation: fadeIn 1s ease-out, float 3s ease-in-out infinite;
+        }
+        
+        .key-display {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 1px;
+            min-width: 500px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+        }
+        
+        .key-display.unblurred {
+            filter: blur(0);
+        }
+        
+        .key-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            animation: shimmer 2s infinite;
+        }
+        
+        .copy-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .copy-btn:hover {
+            background-color: #5649c0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(108, 92, 231, 0.3);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .copy-btn.copied {
+            background-color: var(--success-color);
+        }
+        
+        /* Barra de carga */
+        .progress-container {
+            width: 500px;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                            transparent, 
+                            rgba(255, 255, 255, 0.5), 
+                            transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Mensajes de estado */
+        .status-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            height: 1.5rem;
+            color: var(--primary-color);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: scaleIn 0.3s ease-out;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .modal-btn {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .buy-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .buy-btn:hover {
+            background-color: #5649c0;
+        }
+        
+        .free-btn {
+            background-color: #f1f1f1;
+            color: var(--text-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .free-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .click-counter {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: #666;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Efectos para móviles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .key-display {
+                min-width: 90%;
+                font-size: 1.2rem;
+            }
+            
+            .progress-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#" class="logo">KeyGen</a>
+    </nav>
+    
+    <main>
+        <h1>Generating Key</h1>
+        
+        <div class="key-display" id="keyDisplay">••••••••••••••••••••••••••••••••••••••••</div>
+        <button class="copy-btn" id="copyBtn">
+            <i class="fas fa-copy"></i> Copy Key
+        </button>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="status-message" id="statusMessage">Initializing...</div>
+    </main>
+
+    <!-- Modal para elegir opción -->
+    <div class="modal" id="keyModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Get Your Key</h2>
+            <div class="modal-buttons">
+                <button class="modal-btn buy-btn" id="buyKeyBtn">
+                    <i class="fas fa-shopping-cart"></i> Buy Key ($5.99)
+                </button>
+                <button class="modal-btn free-btn" id="freeKeyBtn">
+                    <i class="fas fa-gift"></i> Get Free Key
+                    <div class="click-counter" id="clickCounter">0/20 clicks</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lista de claves específicas
+        const keys = [
+            "2A9fC7qLZtGx4vB1WsRpE3mD8UjNhKYsTcVoM0lP",
+            "7XkFdZp9QwLm8NVaJrUo3sTyBiG6CHyEtnK4Mo2b",
+            "R9qWz0EoPfJLytM7AkcT5XUv3GhBNdCsVYLiZx1a",
+            "yKz2LoAvUQpNxT8RfB31mCW7EGchMdjtvXYsHl9q",
+            "HXtKMAwC5q4y9b1UFopgVLEnZmJ37sWRYltx0Nci",
+            "t3WZAvCJFmLpKgONqux5EBh9ry0Xd2TsMYv61zPR",
+            "QnT5zoyExRVhUB2MjXlC0GKPsdwAgv7i9LtNY3am",
+            "ZLm38vFXtYdNCAUKpx9os1gRqHlwMJBO7TEciVqg",
+            "piRW9AkGzMCXO4s7TVuYbjQL3NHrnltxeq5Fm2dv",
+            "cFYpTZdWrxmo83LVAq9BJgCH0XuOEtMkN1ys57nl"
+        ];
+        
+        // Elementos del DOM
+        const keyDisplay = document.getElementById('keyDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+        const progressBar = document.getElementById('progressBar');
+        const statusMessage = document.getElementById('statusMessage');
+        const keyModal = document.getElementById('keyModal');
+        const buyKeyBtn = document.getElementById('buyKeyBtn');
+        const freeKeyBtn = document.getElementById('freeKeyBtn');
+        const clickCounter = document.getElementById('clickCounter');
+        
+        // Mensajes de estado
+        const messages = [
+            "Generating key...",
+            "Getting HDWI...",
+            "Validating key...",
+            "Finished!"
+        ];
+        
+        // Variables de progreso
+        let progress = 0;
+        let messageIndex = 0;
+        let generatedKey = '';
+        let clickCount = 0;
+        const maxClicks = 20;
+        
+        // Función para generar una clave aleatoria
+        function generateRandomKey() {
+            return keys[Math.floor(Math.random() * keys.length)];
+        }
+        
+        // Función para actualizar la barra de progreso
+        function updateProgress() {
+            if (progress < 100) {
+                progress += 1;
+                progressBar.style.width = `${progress}%`;
+                
+                // Cambiar mensaje cada 25% de progreso
+                if (progress % 25 === 0 && messageIndex < messages.length - 1) {
+                    messageIndex++;
+                    statusMessage.textContent = messages[messageIndex];
+                    
+                    // Cuando llega al 75%, generar la clave (pero no mostrarla todavía)
+                    if (progress === 75) {
+                        generatedKey = generateRandomKey();
+                    }
+                }
+            } else {
+                // Finalizar
+                statusMessage.textContent = messages[messages.length - 1];
+                clearInterval(progressInterval);
+                
+                // Mostrar modal después de completar
+                setTimeout(() => {
+                    keyModal.style.display = 'flex';
+                }, 500);
+            }
+        }
+        
+        // Iniciar el proceso de carga
+        const progressInterval = setInterval(updateProgress, 60); // 6000ms / 100 = 60ms por paso
+        
+        // Función para copiar la clave
+        copyBtn.addEventListener('click', () => {
+            if (generatedKey && !keyDisplay.classList.contains('blurred')) {
+                navigator.clipboard.writeText(generatedKey).then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    copyBtn.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Key';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+        });
+        
+        // Botón para comprar key
+        buyKeyBtn.addEventListener('click', () => {
+            window.open('https://discord.gg/86ZgtnHz', '_blank');
+        });
+        
+        // Botón para free key
+        freeKeyBtn.addEventListener('click', () => {
+            clickCount++;
+            clickCounter.textContent = `${clickCount}/${maxClicks} clicks`;
+            
+            // Abrir enlace en nueva pestaña
+            window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
+            
+            // Si alcanza el máximo de clicks
+            if (clickCount >= maxClicks) {
+                keyDisplay.textContent = generatedKey;
+                keyDisplay.classList.add('unblurred');
+                keyModal.style.display = 'none';
+                copyBtn.disabled = false;
+            }
+        });
+        
+        // Inicialmente deshabilitar el botón de copiar
+        copyBtn.disabled = true;
+    </script>
+</body>
+</html>
