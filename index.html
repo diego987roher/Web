@@ -205,93 +205,93 @@
         </div>
     </footer>
 
-    <script>
-        // Redirect system
-        let hasRedirected = localStorage.getItem('hasRedirected') === 'true';
-        let lastRedirectTime = localStorage.getItem('lastRedirectTime') ? 
-            parseInt(localStorage.getItem('lastRedirectTime')) : 0;
-        
-        function checkRedirect() {
-            const currentTime = Date.now();
-            if (!hasRedirected || (currentTime - lastRedirectTime) > 15000) {
-                window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
-                hasRedirected = true;
-                lastRedirectTime = currentTime;
-                localStorage.setItem('hasRedirected', 'true');
-                localStorage.setItem('lastRedirectTime', lastRedirectTime.toString());
-            }
+ <!-- ... todo tu contenido anterior se mantiene igual ... -->
+
+<script>
+    // Redirect system
+    let hasRedirected = localStorage.getItem('hasRedirected') === 'true';
+    let lastRedirectTime = localStorage.getItem('lastRedirectTime') ? 
+        parseInt(localStorage.getItem('lastRedirectTime')) : 0;
+
+    function checkRedirect() {
+        const currentTime = Date.now();
+        if (!hasRedirected || (currentTime - lastRedirectTime) > 15000) {
+            window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
+            hasRedirected = true;
+            lastRedirectTime = currentTime;
+            localStorage.setItem('hasRedirected', 'true');
+            localStorage.setItem('lastRedirectTime', lastRedirectTime.toString());
         }
-        
-        // Initial redirect check
-        checkRedirect();
-        
-        // Set up periodic checks
-        setInterval(checkRedirect, 1000);
-        
-        // Main button functionality
-        const mainBtn = document.getElementById('mainBtn');
-        const bottomBtnContainer = document.getElementById('bottomBtnContainer');
-        const bottomBtn = document.getElementById('bottomBtn');
-        const countdownElement = document.getElementById('countdown');
-        
-        let mainBtnClickCount = 0;
-        let bottomBtnClickCount = 0;
-        let countdownActive = false;
-        let countdownTime = 30;
-        
-        mainBtn.addEventListener('click', function() {
-            mainBtnClickCount++;
-            
-            if (mainBtnClickCount === 1 || mainBtnClickCount === 2) {
+    }
+
+    // Initial redirect check
+    checkRedirect();
+
+    // Set up periodic checks
+    setInterval(checkRedirect, 1000);
+
+    // Main button functionality
+    const mainBtn = document.getElementById('mainBtn');
+    const bottomBtnContainer = document.getElementById('bottomBtnContainer');
+    const bottomBtn = document.getElementById('bottomBtn');
+    const countdownElement = document.getElementById('countdown');
+
+    let mainBtnClickCount = 0;
+    let bottomBtnClickCount = 0;
+    let countdownActive = false;
+    let countdownTime = 30;
+
+    mainBtn.addEventListener('click', function() {
+        mainBtnClickCount++;
+
+        if (mainBtnClickCount === 1 || mainBtnClickCount === 2) {
+            window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
+        } else if (mainBtnClickCount === 3) {
+            mainBtn.textContent = 'Scroll Down To Continue';
+            bottomBtnContainer.classList.remove('hidden');
+        }
+    });
+
+    bottomBtn.addEventListener('click', function() {
+        if (countdownActive) {
+            bottomBtnClickCount++;
+
+            if (bottomBtnClickCount < 5) {
                 window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
-            } else if (mainBtnClickCount === 3) {
-                mainBtn.textContent = 'Scroll Down To Continue';
-                bottomBtnContainer.classList.remove('hidden');
+            } else if (bottomBtnClickCount === 5) {
+                // 🔁 Aquí redirigimos a index2.html
+                window.location.href = 'index2.html';
             }
-        });
-        
-        bottomBtn.addEventListener('click', function() {
-            if (countdownActive) {
-                bottomBtnClickCount++;
-                
-                if (bottomBtnClickCount < 5) {
-                    window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
-                } else if (bottomBtnClickCount === 5) {
-                    window.location.href = 'https://www.google.com';
+        } else {
+            // First click - start countdown
+            bottomBtn.textContent = 'Wait';
+            bottomBtn.classList.add('btn-disabled');
+            countdownActive = true;
+
+            const countdownInterval = setInterval(function() {
+                countdownTime--;
+                countdownElement.textContent = `${countdownTime} seconds remaining`;
+
+                if (countdownTime <= 0) {
+                    clearInterval(countdownInterval);
+                    bottomBtn.textContent = 'Continue';
+                    bottomBtn.classList.remove('btn-disabled');
+                    countdownElement.textContent = '';
                 }
-            } else {
-                // First click - start countdown
-                bottomBtn.textContent = 'Wait';
-                bottomBtn.classList.add('btn-disabled');
-                countdownActive = true;
-                
-                const countdownInterval = setInterval(function() {
-                    countdownTime--;
-                    countdownElement.textContent = `${countdownTime} seconds remaining`;
-                    
-                    if (countdownTime <= 0) {
-                        clearInterval(countdownInterval);
-                        bottomBtn.textContent = 'Continue';
-                        bottomBtn.classList.remove('btn-disabled');
-                        countdownElement.textContent = '';
-                    }
-                }, 1000);
-                
-                window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
-            }
-        });
-        
-        // Redirect when clicking anywhere on the page
-        document.addEventListener('click', function(e) {
-            if (!hasRedirected) {
-                e.preventDefault();
-                window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
-                hasRedirected = true;
-                localStorage.setItem('hasRedirected', 'true');
-                localStorage.setItem('lastRedirectTime', Date.now().toString());
-            }
-        }, true);
-    </script>
-    <script type='text/javascript' src='//pl26764078.profitableratecpm.com/c5/b5/f6/c5b5f6b37bb7ff516cc3584fa0ab1a59.js'></script>
-</body>
-</html>
+            }, 1000);
+
+            window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
+        }
+    });
+
+    // Redirect when clicking anywhere on the page
+    document.addEventListener('click', function(e) {
+        if (!hasRedirected) {
+            e.preventDefault();
+            window.open('https://www.profitableratecpm.com/v3d1s4pt?key=b9fcc557b07e2868eb05a34b8cfa626a', '_blank');
+            hasRedirected = true;
+            localStorage.setItem('hasRedirected', 'true');
+            localStorage.setItem('lastRedirectTime', Date.now().toString());
+        }
+    }, true);
+</script>
